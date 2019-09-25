@@ -74,6 +74,7 @@ li > .times{
     float: right;
     padding-right: 15px;
     visibility:hidden;
+    cursor: pointer;
 }
 li:hover > .times {
  visibility:visible;

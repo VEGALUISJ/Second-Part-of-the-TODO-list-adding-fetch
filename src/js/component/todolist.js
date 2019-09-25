@@ -1,5 +1,4 @@
 import React from "react";
-import uid from "uid";
 
 //include images into your bundle
 
@@ -11,10 +10,7 @@ export class Todolist extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			list: [
-				{ id: uid(), todo: "Take a shower" },
-				{ id: uid(), todo: "Repair the car" }
-			]
+			list: []
 		};
 		this.addToDo = this.addToDo.bind(this);
 		this.handleClick = this.handleClick.bind(this);
@@ -22,37 +18,65 @@ export class Todolist extends React.Component {
 
 	addToDo(todo) {
 		const todos = {
-			id: uid(),
-			todo: todo
+			label: todo
 		};
 		this.setState({ list: [...this.state.list, todos] });
+		this.updateTodo(this.state.list);
 	}
 
-	handleClick(e, id) {
+	handleClick(e, index) {
 		e.preventDefault();
-		console.log("HICE CLICK", id);
-		const todoList = this.state.list.filter(item => {
-			return item.id != id;
-		});
-		this.setState({ list: todoList });
+		console.log("HICE CLICK", index);
+		let temp = this.state.list;
+		temp.splice(index, 1);
+		this.setState({ list: temp });
+		this.updateTodo(this.state.list);
+	}
+
+	componentDidMount() {
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/VEGALUISJ")
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					console.log("Bad response");
+				}
+			})
+			.then(data => {
+				this.setState({ list: data });
+				console.log(data);
+			})
+			.catch(error => console.log(error));
+	}
+
+	updateTodo(todo) {
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/VEGALUISJ", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			mode: "cors",
+			body: JSON.stringify(todo)
+		})
+			.then(res => console.log(res))
+			.catch(err => console.log(err));
 	}
 
 	render() {
+		console.log(this.state);
 		return (
 			<div className="maincontainer">
 				<div className="tittle">todos</div>
 				<div className="lista">
 					<TodoForm addToDo={this.addToDo} />
 					<ul>
-						{this.state.list.map(item => {
+						{this.state.list.map((item, ind) => {
 							return (
-								<li key={item.id}>
-									{item.todo}
+								<li key={ind}>
+									{item.label}
 									<span
 										className="times fa fa-times"
-										onClick={e =>
-											this.handleClick(e, item.id)
-										}
+										onClick={e => this.handleClick(e, ind)}
 									/>
 								</li>
 							);
