@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 //include images into your bundle
 
@@ -18,10 +19,10 @@ export class Todolist extends React.Component {
 
 	addToDo(todo) {
 		const todos = {
-			label: todo
+			label: todo,
+			done: false
 		};
-		this.setState({ list: [...this.state.list, todos] });
-		this.updateTodo(this.state.list);
+		this.updateTodo({ list: [...this.state.list, todos] });
 	}
 
 	handleClick(e, index) {
@@ -30,7 +31,6 @@ export class Todolist extends React.Component {
 		let temp = this.state.list;
 		temp.splice(index, 1);
 		this.setState({ list: temp });
-		this.updateTodo(this.state.list);
 	}
 
 	componentDidMount() {
@@ -51,15 +51,21 @@ export class Todolist extends React.Component {
 
 	updateTodo(todo) {
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/VEGALUISJ", {
-			method: "PUT",
+			method: "PUT", // or 'POST'
+			body: JSON.stringify(todo), // data can be `string` or {object}!
 			headers: {
 				"Content-Type": "application/json"
-			},
-			mode: "cors",
-			body: JSON.stringify(todo)
+			}
 		})
-			.then(res => console.log(res))
-			.catch(err => console.log(err));
+			.then(res => res.json())
+			.then(response => {
+				if (!response.msg) {
+					this.setState(todo);
+				} else {
+					console.log(response.msg);
+				}
+			})
+			.catch(error => console.error("Error:", error));
 	}
 
 	render() {
@@ -88,3 +94,7 @@ export class Todolist extends React.Component {
 		);
 	}
 }
+
+Todolist.propTypes = {
+	addToDo: PropTypes.string
+};

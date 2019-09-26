@@ -1,4 +1,6 @@
 import React from "react";
+import { Todolist } from "./todolist";
+import PropTypes from "prop-types";
 
 //include images into your bundle
 
@@ -29,3 +31,7 @@ export class TodoForm extends React.Component {
 		);
 	}
 }
+
+TodoForm.propTypes = {
+	addToDo: PropTypes.string
+};
