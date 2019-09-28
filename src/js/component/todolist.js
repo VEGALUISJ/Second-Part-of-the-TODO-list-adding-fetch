@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 //include images into your bundle
 
@@ -22,7 +21,11 @@ export class Todolist extends React.Component {
 			label: todo,
 			done: false
 		};
-		this.updateTodo({ list: [...this.state.list, todos] });
+		console.log(todos);
+		const list = [...this.state.list, todos];
+		this.setState({ list: list });
+		console.log("en el addtodo", list);
+		this.updateTodo(list);
 	}
 
 	handleClick(e, index) {
@@ -31,6 +34,7 @@ export class Todolist extends React.Component {
 		let temp = this.state.list;
 		temp.splice(index, 1);
 		this.setState({ list: temp });
+		this.updateTodo(temp);
 	}
 
 	componentDidMount() {
@@ -50,6 +54,7 @@ export class Todolist extends React.Component {
 	}
 
 	updateTodo(todo) {
+		console.log(todo);
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/VEGALUISJ", {
 			method: "PUT", // or 'POST'
 			body: JSON.stringify(todo), // data can be `string` or {object}!
@@ -64,12 +69,13 @@ export class Todolist extends React.Component {
 				} else {
 					console.log(response.msg);
 				}
+				console.log(response);
 			})
 			.catch(error => console.error("Error:", error));
 	}
 
 	render() {
-		console.log(this.state);
+		console.log(this.state.list);
 		return (
 			<div className="maincontainer">
 				<div className="tittle">todos</div>
@@ -94,7 +100,3 @@ export class Todolist extends React.Component {
 		);
 	}
 }
-
-Todolist.propTypes = {
-	addToDo: PropTypes.string
-};

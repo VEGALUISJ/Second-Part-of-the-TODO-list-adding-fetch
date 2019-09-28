@@ -31,7 +31,6 @@ export class TodoForm extends React.Component {
 		);
 	}
 }
-
 TodoForm.propTypes = {
 	addToDo: PropTypes.string
 };
